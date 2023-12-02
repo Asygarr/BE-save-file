@@ -1,4 +1,13 @@
-import { Controller, Res, Post, Body, Req, Delete, Get, HttpStatus } from '@nestjs/common';
+import {
+  Controller,
+  Res,
+  Post,
+  Body,
+  Req,
+  Delete,
+  Get,
+  HttpStatus,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { UsersService } from 'src/users/users.service';
 import { LoginDto } from './dto/login.dto';
@@ -7,8 +16,8 @@ import { RegisterUserDto } from './dto/register.dto';
 @Controller('auth')
 export class AuthController {
   constructor(
-    private readonly authService: AuthService, 
-    private readonly usersService: UsersService
+    private readonly authService: AuthService,
+    private readonly usersService: UsersService,
   ) {}
 
   @Post('login')
@@ -21,16 +30,20 @@ export class AuthController {
       return res.status(HttpStatus.OK).json({
         message: 'Berhasil login',
         data: user,
-      })
+      });
     } catch (error) {
       return res.status(error.status || HttpStatus.INTERNAL_SERVER_ERROR).json({
         message: error.message,
-      })
+      });
     }
   }
 
   @Post('register')
-  async register(@Body() RegisterUserDto: RegisterUserDto, @Res() res: any, @Req() req: any) {
+  async register(
+    @Body() RegisterUserDto: RegisterUserDto,
+    @Res() res: any,
+    @Req() req: any,
+  ) {
     try {
       const registerUser = await this.usersService.create(RegisterUserDto);
 
@@ -39,11 +52,11 @@ export class AuthController {
       return res.status(HttpStatus.CREATED).json({
         message: 'Berhasil membuat user',
         data: registerUser,
-      })
+      });
     } catch (error) {
       return res.status(error.status || HttpStatus.INTERNAL_SERVER_ERROR).json({
         message: error.message,
-      })
+      });
     }
   }
 
@@ -57,11 +70,11 @@ export class AuthController {
       return res.status(HttpStatus.OK).json({
         message: 'Anda saat ini sedang login',
         data: user,
-      })
+      });
     } catch (error) {
       return res.status(error.status || HttpStatus.INTERNAL_SERVER_ERROR).json({
         message: error.message,
-      })
+      });
     }
   }
 
@@ -72,11 +85,11 @@ export class AuthController {
 
       return res.status(HttpStatus.OK).json({
         message: 'Berhasil logout',
-      })
+      });
     } catch (error) {
       return res.status(error.status || HttpStatus.INTERNAL_SERVER_ERROR).json({
         message: error.message,
-      })
+      });
     }
   }
 }

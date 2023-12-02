@@ -11,7 +11,10 @@ export class AuthService {
     const { email, password } = LoginDto;
 
     if (!email || !password) {
-      throw new HttpException('Mohon isi terlebih dahulu', HttpStatus.BAD_REQUEST);
+      throw new HttpException(
+        'Mohon isi terlebih dahulu',
+        HttpStatus.BAD_REQUEST,
+      );
     }
 
     const loginUser = await this.prisma.user.findUnique({
@@ -23,8 +26,8 @@ export class AuthService {
         email: true,
         name: true,
         password: true,
-      }
-    })
+      },
+    });
 
     if (!loginUser) {
       throw new HttpException('Email tidak terdaftar', HttpStatus.BAD_REQUEST);
@@ -40,13 +43,13 @@ export class AuthService {
       id: loginUser.id,
       email: loginUser.email,
       name: loginUser.name,
-    }
+    };
 
     return data;
   }
 
   async Profile(id: string) {
-    if(!id) {
+    if (!id) {
       throw new HttpException('Anda belum login', HttpStatus.BAD_REQUEST);
     }
 
@@ -58,8 +61,8 @@ export class AuthService {
         id: true,
         email: true,
         name: true,
-      }
-    })
+      },
+    });
 
     return cekUser;
   }
