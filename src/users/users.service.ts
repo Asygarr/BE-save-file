@@ -4,7 +4,6 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaClient } from '@prisma/client';
 import { HttpException, HttpStatus } from '@nestjs/common';
 import * as argon from 'argon2';
-import { parse } from 'path';
 
 @Injectable()
 export class UsersService {
