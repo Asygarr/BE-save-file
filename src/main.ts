@@ -14,7 +14,8 @@ async function bootstrap() {
   app.use(
     session({
       cookie: {
-        maxAge: 7 * 24 * 60 * 60 * 1000, // ms
+        maxAge: 1 * 24 * 60 * 60 * 1000, // ms
+        secure: 'auto',
       },
       secret: process.env.SESSION_SECRET,  // Sesuaikan dengan secret Anda
       resave: true,
