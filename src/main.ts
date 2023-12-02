@@ -4,9 +4,11 @@ import * as dotenv from 'dotenv';
 import * as session from 'express-session';
 import { PrismaClient } from '@prisma/client';
 import { PrismaSessionStore } from '@quixo3/prisma-session-store';
+import { VerifyUserMiddleware } from './middleware/verify-user.middleware';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  // const verifyUserMiddleware = new VerifyUserMiddleware();
   const prisma = new PrismaClient();
 
   dotenv.config();
@@ -27,6 +29,8 @@ async function bootstrap() {
       }),
     }),
   );
+
+  // app.use(verifyUserMiddleware.use);
 
   await app.listen(3000);
 }

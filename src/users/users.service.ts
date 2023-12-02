@@ -19,8 +19,8 @@ export class UsersService {
     const cekUser = await this.prisma.user.findUnique({
       where: {
         email,
-      }
-    })
+      },
+    });
 
     if (cekUser) {
       throw new HttpException('Email sudah terdaftar', HttpStatus.BAD_REQUEST);
@@ -35,9 +35,16 @@ export class UsersService {
       data: {
         email,
         name,
-        password: hashedPassword
-      }
-    })
+        password: hashedPassword,
+      },
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    });
   }
 
   async findAll() {
@@ -47,17 +54,17 @@ export class UsersService {
         email: true,
         name: true,
         createdAt: true,
-        updatedAt: true
-      }
+        updatedAt: true,
+      },
     });
   }
 
   async findOne(id: string) {
     const cekUSer = await this.prisma.user.findUnique({
       where: {
-        id: id
-      }
-    })
+        id: id,
+      },
+    });
 
     if (!cekUSer) {
       throw new HttpException('User tidak ditemukan', HttpStatus.NOT_FOUND);
@@ -65,16 +72,16 @@ export class UsersService {
 
     return this.prisma.user.findUnique({
       where: {
-        id: id
+        id: id,
       },
       select: {
         id: true,
         email: true,
         name: true,
         createdAt: true,
-        updatedAt: true
-      }
-    })
+        updatedAt: true,
+      },
+    });
   }
 
   async update(id: string, updateUserDto: UpdateUserDto) {
@@ -86,16 +93,16 @@ export class UsersService {
 
     const cekUser = await this.prisma.user.findUnique({
       where: {
-        id: id
+        id: id,
       },
       select: {
         id: true,
         email: true,
         name: true,
         createdAt: true,
-        updatedAt: true
-      }
-    })
+        updatedAt: true,
+      },
+    });
 
     const dataLama = cekUser;
 
@@ -111,34 +118,34 @@ export class UsersService {
 
     const dataBaru = await this.prisma.user.update({
       where: {
-        id: id
+        id: id,
       },
       data: {
         email,
         name,
-        password: hashedPassword
+        password: hashedPassword,
       },
       select: {
         id: true,
         email: true,
         name: true,
         createdAt: true,
-        updatedAt: true
-      }
-    })
+        updatedAt: true,
+      },
+    });
 
     return {
       dataLama,
-      dataBaru
-    }
+      dataBaru,
+    };
   }
 
   async remove(id: string) {
     const cekUser = await this.prisma.user.findUnique({
       where: {
-        id
-      }
-    })
+        id,
+      },
+    });
 
     if (!cekUser) {
       throw new HttpException('User tidak ditemukan', HttpStatus.NOT_FOUND);
@@ -146,15 +153,15 @@ export class UsersService {
 
     return this.prisma.user.delete({
       where: {
-        id
+        id,
       },
       select: {
         id: true,
         email: true,
         name: true,
         createdAt: true,
-        updatedAt: true
-      }
-    })
+        updatedAt: true,
+      },
+    });
   }
 }

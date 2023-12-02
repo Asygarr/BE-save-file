@@ -1,4 +1,14 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Res, HttpStatus } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Res,
+  HttpStatus,
+} from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -15,11 +25,11 @@ export class UsersController {
       return res.status(HttpStatus.CREATED).json({
         message: 'Berhasil membuat user',
         data: createUser,
-      })
+      });
     } catch (error) {
       return res.status(error.status || HttpStatus.INTERNAL_SERVER_ERROR).json({
         message: error.message,
-      })
+      });
     }
   }
 
@@ -31,11 +41,11 @@ export class UsersController {
       return res.status(HttpStatus.OK).json({
         message: 'User yang terdaftar',
         data: users,
-      })
+      });
     } catch (error) {
       return res.status(error.status || HttpStatus.INTERNAL_SERVER_ERROR).json({
         message: error.message,
-      })
+      });
     }
   }
 
@@ -47,16 +57,20 @@ export class UsersController {
       return res.status(HttpStatus.OK).json({
         message: 'User yang terdaftar',
         data: user,
-      })
+      });
     } catch (error) {
       return res.status(error.status || HttpStatus.INTERNAL_SERVER_ERROR).json({
         message: error.message,
-      })
+      });
     }
   }
 
   @Patch(':id')
-  async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto, @Res() res: any) {
+  async update(
+    @Param('id') id: string,
+    @Body() updateUserDto: UpdateUserDto,
+    @Res() res: any,
+  ) {
     try {
       const updateUser = await this.usersService.update(id, updateUserDto);
 
@@ -64,11 +78,11 @@ export class UsersController {
         message: 'Berhasil mengubah user',
         data_lama: updateUser.dataLama,
         data_baru: updateUser.dataBaru,
-      })
+      });
     } catch (error) {
       return res.status(error.status || HttpStatus.INTERNAL_SERVER_ERROR).json({
         message: error.message,
-      })
+      });
     }
   }
 
@@ -80,11 +94,11 @@ export class UsersController {
       return res.status(HttpStatus.OK).json({
         message: 'Berhasil menghapus user',
         data: deleteUser,
-      })
+      });
     } catch (error) {
       return res.status(error.status || HttpStatus.INTERNAL_SERVER_ERROR).json({
         message: error.message,
-      })
+      });
     }
   }
 }
