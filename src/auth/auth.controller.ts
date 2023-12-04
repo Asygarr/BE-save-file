@@ -7,6 +7,7 @@ import {
   Delete,
   Get,
   HttpStatus,
+  HttpException
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { UsersService } from 'src/users/users.service';
@@ -21,31 +22,32 @@ export class AuthController {
   ) {}
 
   @Post('login')
-  async login(@Body() LoginDto: LoginDto, @Res() res: any, @Req() req: any) {
+  async login(@Body() loginDto: LoginDto, @Res() res: any, @Req() req: any) {
     try {
-      const user = await this.authService.Login(LoginDto);
+      const loginUser = await this.authService.Login(loginDto);
 
-      req.session.user = user.id;
+      req.session.user = loginUser.id;
 
       return res.status(HttpStatus.OK).json({
         message: 'Berhasil login',
-        data: user,
+        data: loginUser,
       });
     } catch (error) {
-      return res.status(error.status || HttpStatus.INTERNAL_SERVER_ERROR).json({
-        message: error.message,
-      });
+      throw new HttpException(
+        error.message || 'Internal server error',
+        error.status || HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
   @Post('register')
   async register(
-    @Body() RegisterUserDto: RegisterUserDto,
+    @Body() registerUserDto: RegisterUserDto,
     @Res() res: any,
     @Req() req: any,
   ) {
     try {
-      const registerUser = await this.usersService.create(RegisterUserDto);
+      const registerUser = await this.usersService.create(registerUserDto);
 
       req.session.user = registerUser.id;
 
@@ -54,9 +56,10 @@ export class AuthController {
         data: registerUser,
       });
     } catch (error) {
-      return res.status(error.status || HttpStatus.INTERNAL_SERVER_ERROR).json({
-        message: error.message,
-      });
+      throw new HttpException(
+        error.message || 'Internal server error',
+        error.status || HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
@@ -72,24 +75,33 @@ export class AuthController {
         data: user,
       });
     } catch (error) {
-      return res.status(error.status || HttpStatus.INTERNAL_SERVER_ERROR).json({
-        message: error.message,
-      });
+      throw new HttpException(
+        error.message || 'Internal server error',
+        error.status || HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
   @Delete('logout')
   async logout(@Res() res: any, @Req() req: any) {
-    try {
-      req.session.destroy();
+    if (!req.session.user) {
+      return res.status(HttpStatus.UNAUTHORIZED).json({
+        message: 'Anda belum login',
+      });
+    }
+
+    req.session.destroy((err: any) => {
+      if (err) {
+        return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+          message: err.message,
+        });
+      }
+
+      res.clearCookie('sid');
 
       return res.status(HttpStatus.OK).json({
         message: 'Berhasil logout',
       });
-    } catch (error) {
-      return res.status(error.status || HttpStatus.INTERNAL_SERVER_ERROR).json({
-        message: error.message,
-      });
-    }
+    });
   }
 }

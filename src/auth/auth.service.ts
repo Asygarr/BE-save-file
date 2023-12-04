@@ -7,8 +7,8 @@ import * as argon from 'argon2';
 export class AuthService {
   constructor(private readonly prisma: PrismaClient) {}
 
-  async Login(LoginDto: LoginDto) {
-    const { email, password } = LoginDto;
+  async Login(loginDto: LoginDto) {
+    const { email, password } = loginDto;
 
     if (!email || !password) {
       throw new HttpException(
@@ -20,13 +20,7 @@ export class AuthService {
     const loginUser = await this.prisma.user.findUnique({
       where: {
         email,
-      },
-      select: {
-        id: true,
-        email: true,
-        name: true,
-        password: true,
-      },
+      }
     });
 
     if (!loginUser) {
@@ -50,7 +44,7 @@ export class AuthService {
 
   async Profile(id: string) {
     if (!id) {
-      throw new HttpException('Anda belum login', HttpStatus.BAD_REQUEST);
+      throw new HttpException('Anda belum login', HttpStatus.UNAUTHORIZED);
     }
 
     const cekUser = await this.prisma.user.findUnique({
