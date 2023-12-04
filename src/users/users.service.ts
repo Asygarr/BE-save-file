@@ -62,7 +62,7 @@ export class UsersService {
   async findOne(id: string) {
     const cekUSer = await this.prisma.user.findUnique({
       where: {
-        id: id,
+        id
       },
     });
 
@@ -70,18 +70,17 @@ export class UsersService {
       throw new HttpException('User tidak ditemukan', HttpStatus.NOT_FOUND);
     }
 
-    return this.prisma.user.findUnique({
-      where: {
-        id: id,
-      },
-      select: {
-        id: true,
-        email: true,
-        name: true,
-        createdAt: true,
-        updatedAt: true,
-      },
-    });
+    const { email, name, createdAt, updatedAt } = cekUSer;
+
+    const user = {
+      id: cekUSer.id,
+      email,
+      name,
+      createdAt,
+      updatedAt
+    }
+
+    return user;
   }
 
   async update(id: string, updateUserDto: UpdateUserDto) {
