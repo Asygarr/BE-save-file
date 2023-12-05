@@ -8,7 +8,6 @@ import {
   Delete,
   Res,
   HttpStatus,
-  HttpException,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -23,7 +22,7 @@ export class UsersController {
   ) {}
 
   @Post()
-  async create(@Body() createUserDto: CreateUserDto, @Res() res: any) {
+  create(@Body() createUserDto: CreateUserDto, @Res() res: any) {
     return this.responseHandle.handle(
       res,
       this.usersService.create(createUserDto),
@@ -33,7 +32,7 @@ export class UsersController {
   }
 
   @Get()
-  async findAll(@Res() res: any) {
+  findAll(@Res() res: any) {
     return this.responseHandle.handle(
       res,
       this.usersService.findAll(),
@@ -43,7 +42,7 @@ export class UsersController {
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: string, @Res() res: any) {
+  findOne(@Param('id') id: string, @Res() res: any) {
     return this.responseHandle.handle(
       res,
       this.usersService.findOne(id),
@@ -53,7 +52,7 @@ export class UsersController {
   }
 
   @Patch(':id')
-  async update(
+  update(
     @Param('id') id: string,
     @Body() updateUserDto: UpdateUserDto,
     @Res() res: any,
@@ -67,7 +66,7 @@ export class UsersController {
   }
 
   @Delete(':id')
-  async remove(@Param('id') id: string, @Res() res: any) {
+  remove(@Param('id') id: string, @Res() res: any) {
     return this.responseHandle.handle(
       res,
       this.usersService.remove(id),
