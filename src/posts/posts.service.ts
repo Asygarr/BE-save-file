@@ -1,26 +1,63 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus, Req } from '@nestjs/common';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
+import { PrismaClient } from '@prisma/client';
 
 @Injectable()
 export class PostsService {
-  create(createPostDto: CreatePostDto) {
-    return 'This action adds a new post';
+  constructor(private readonly prisma: PrismaClient) {}
+
+  async create(
+    createPostDto: CreatePostDto,
+    authorId: string,
+    file: Express.Multer.File,
+    @Req() req: any,
+  ) {
+    const { title } = createPostDto;
+
+    if (!title || !file) {
+      throw new HttpException('Data tidak lengkap', HttpStatus.BAD_REQUEST);
+    }
+
+    const fileUrl = `${req.protocol}://${req.get('host')}/uploads/${
+      file.filename
+    }`;
+
+    const response = await this.prisma.post.create({
+      data: {
+        title,
+        file: fileUrl,
+        authorId,
+      },
+    });
+
+    return response;
   }
 
-  findAll() {
-    return `This action returns all posts`;
+  async findAll() {
+    const response = await this.prisma.post.findMany({
+      include: {
+        author: {
+          select: {
+            email: true,
+            name: true,
+          },
+        },
+      },
+    });
+
+    return response;
   }
 
-  findOne(id: number) {
+  async findOne(id: string) {
     return `This action returns a #${id} post`;
   }
 
-  update(id: number, updatePostDto: UpdatePostDto) {
+  async update(id: string, updatePostDto: UpdatePostDto) {
     return `This action updates a #${id} post`;
   }
 
-  remove(id: number) {
+  async remove(id: string) {
     return `This action removes a #${id} post`;
   }
 }
