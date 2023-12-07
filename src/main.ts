@@ -4,11 +4,10 @@ import * as dotenv from 'dotenv';
 import * as session from 'express-session';
 import { PrismaClient } from '@prisma/client';
 import { PrismaSessionStore } from '@quixo3/prisma-session-store';
-import { VerifyUserMiddleware } from './middleware/verify-user.middleware';
+import { NestExpressApplication } from '@nestjs/platform-express/interfaces';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
-  // const verifyUserMiddleware = new VerifyUserMiddleware();
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
   const prisma = new PrismaClient();
 
   dotenv.config();
@@ -16,7 +15,7 @@ async function bootstrap() {
   app.use(
     session({
       cookie: {
-        maxAge: 1 * 24 * 60 * 60 * 1000, // ms
+        maxAge: 3 * 24 * 60 * 60 * 1000,
         secure: 'auto',
       },
       secret: process.env.SESSION_SECRET,  // Sesuaikan dengan secret Anda
@@ -30,7 +29,7 @@ async function bootstrap() {
     }),
   );
 
-  // app.use(verifyUserMiddleware.use);
+  app.useStaticAssets('public');
 
   await app.listen(3000);
 }
