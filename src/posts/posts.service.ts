@@ -2,6 +2,7 @@ import { Injectable, HttpException, HttpStatus, Req } from '@nestjs/common';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { PrismaClient } from '@prisma/client';
+import * as fs from 'fs';
 
 @Injectable()
 export class PostsService {
@@ -50,14 +51,129 @@ export class PostsService {
   }
 
   async findOne(id: string) {
-    return `This action returns a #${id} post`;
+    const user = await this.prisma.post.findUnique({
+      where: {
+        id,
+      },
+      include: {
+        author: {
+          select: {
+            email: true,
+            name: true,
+          },
+        },
+      },
+    });
+
+    if (!user) {
+      throw new HttpException('Post tidak ditemukan', HttpStatus.NOT_FOUND);
+    }
+
+    return user;
   }
 
-  async update(id: string, updatePostDto: UpdatePostDto) {
-    return `This action updates a #${id} post`;
+  async update(
+    id: string,
+    updatePostDto: UpdatePostDto,
+    file: Express.Multer.File,
+    @Req() req: any,
+  ) {
+    const { title } = updatePostDto;
+
+    const postLama = await this.prisma.post.findUnique({
+      where: {
+        id,
+      },
+      include: {
+        author: {
+          select: {
+            email: true,
+            name: true,
+          },
+        },
+      },
+    });
+
+    if (!postLama) {
+      throw new HttpException('Post tidak ditemukan', HttpStatus.NOT_FOUND);
+    }
+
+    const fileUrl = `${req.protocol}://${req.get('host')}/uploads/${
+      file.filename
+    }`;
+
+    const splitUrl = postLama.file.split('/');
+    const fileLama = splitUrl[splitUrl.length - 1];
+    const cekDirr = `./public/uploads/${fileLama}`;
+
+    if (fs.existsSync(cekDirr)) {
+      fs.unlinkSync(cekDirr);
+    }
+
+    const postBaru = await this.prisma.post.update({
+      where: {
+        id,
+      },
+      data: {
+        title,
+        file: fileUrl,
+      },
+      include: {
+        author: {
+          select: {
+            email: true,
+            name: true,
+          },
+        },
+      },
+    });
+
+    return {
+      postLama,
+      postBaru,
+    };
   }
 
-  async remove(id: string) {
-    return `This action removes a #${id} post`;
+  async remove(id: string, userIdLogin: string) {
+    const cekPost = await this.prisma.post.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    if (cekPost.authorId !== userIdLogin) {
+      throw new HttpException(
+        'Anda tidak berhak menghapus post ini',
+        HttpStatus.UNAUTHORIZED,
+      );
+    }
+
+    if (!cekPost) {
+      throw new HttpException('Post tidak ditemukan', HttpStatus.NOT_FOUND);
+    }
+
+    const splitUrl = cekPost.file.split('/');
+    const file = splitUrl[splitUrl.length - 1];
+    const cekDirr = `./public/uploads/${file}`;
+
+    if (fs.existsSync(cekDirr)) {
+      fs.unlinkSync(cekDirr);
+    }
+
+    const deletePost = await this.prisma.post.delete({
+      where: {
+        id,
+      },
+      include: {
+        author: {
+          select: {
+            email: true,
+            name: true,
+          },
+        },
+      },
+    });
+
+    return deletePost;
   }
 }

@@ -11,24 +11,24 @@ async function bootstrap() {
   const prisma = new PrismaClient();
 
   dotenv.config();
-  
+
   app.use(
     session({
       cookie: {
         maxAge: 3 * 24 * 60 * 60 * 1000,
-        secure: 'auto',
       },
-      secret: process.env.SESSION_SECRET,  // Sesuaikan dengan secret Anda
+      secret: process.env.SESSION_SECRET, // Sesuaikan dengan secret Anda
       resave: true,
       saveUninitialized: true,
       store: new PrismaSessionStore(prisma, {
-        checkPeriod: 2 * 60 * 1000,  //ms
+        checkPeriod: 2 * 60 * 1000, //ms
         dbRecordIdIsSessionId: true,
         dbRecordIdFunction: undefined,
       }),
     }),
   );
 
+  app.enableCors();
   app.useStaticAssets('public');
 
   await app.listen(3000);

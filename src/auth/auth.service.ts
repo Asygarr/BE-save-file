@@ -1,4 +1,4 @@
-import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus, Req } from '@nestjs/common';
 import { PrismaClient } from '@prisma/client';
 import { LoginDto } from './dto/login.dto';
 import * as argon from 'argon2';
@@ -7,7 +7,14 @@ import * as argon from 'argon2';
 export class AuthService {
   constructor(private readonly prisma: PrismaClient) {}
 
-  async Login(loginDto: LoginDto) {
+  async Login(loginDto: LoginDto, @Req() req: any) {
+    if (req.session.user) {
+      throw new HttpException(
+        'Anda sudah login, silahkan logout terlebih dahulu',
+        HttpStatus.UNAUTHORIZED,
+      );
+    }
+
     const { email, password } = loginDto;
 
     if (!email || !password) {
@@ -20,7 +27,7 @@ export class AuthService {
     const loginUser = await this.prisma.user.findUnique({
       where: {
         email,
-      }
+      },
     });
 
     if (!loginUser) {

@@ -24,7 +24,7 @@ export class AuthController {
   @Post('login')
   async login(@Body() loginDto: LoginDto, @Res() res: any, @Req() req: any) {
     try {
-      const loginUser = await this.authService.Login(loginDto);
+      const loginUser = await this.authService.Login(loginDto, req);
 
       req.session.user = loginUser.id;
 
