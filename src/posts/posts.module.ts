@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { PostsController } from './posts.controller';
-import { ResponseHandler } from 'src/utils/response-handler';
+import { ResponseHandler } from 'src/util/response-handler';
 import { PrismaClient } from '@prisma/client';
 
 @Module({

@@ -19,8 +19,8 @@ import { FilesInterceptor } from '@nestjs/platform-express';
 import { PostsService } from './posts.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
-import { ResponseHandler } from 'src/utils/response-handler';
-import { storage } from 'src/configs/multer.config';
+import { ResponseHandler } from 'src/util/response-handler';
+import { MulterConfig } from 'src/config/multer.config';
 
 @Controller('posts')
 export class PostsController {
@@ -30,7 +30,7 @@ export class PostsController {
   ) {}
 
   @Post()
-  @UseInterceptors(FileInterceptor('file', { storage: storage }))
+  @UseInterceptors(FileInterceptor('file', { storage: MulterConfig.storage }))
   create(
     @UploadedFile(
       new ParseFilePipeBuilder()
@@ -59,11 +59,23 @@ export class PostsController {
 
   // upload multi file
   @Post('multi')
-  @UseInterceptors(FilesInterceptor('files', 10, { storage: storage}))
+  @UseInterceptors(
+    FilesInterceptor('files', 10, { storage: MulterConfig.storage }),
+  )
   createMulti(
-    @UploadedFiles() files: Array<Express.Multer.File>
+    @UploadedFiles() files: Array<Express.Multer.File>,
+    @Body() createPostDto: CreatePostDto,
+    @Req() req: any,
+    @Res() res: any,
   ) {
-    console.log(files);
+    const authorId = req.session.user;
+
+    return this.responseHandler.handle(
+      res,
+      this.postsService.createMulti(files, createPostDto, req, authorId),
+      HttpStatus.CREATED,
+      'Berhasil membuat post',
+    );
   }
 
   @Get()
@@ -87,7 +99,7 @@ export class PostsController {
   }
 
   @Patch(':id')
-  @UseInterceptors(FileInterceptor('file', { storage: storage }))
+  @UseInterceptors(FileInterceptor('file', { storage: MulterConfig.storage }))
   update(
     @UploadedFile(
       new ParseFilePipeBuilder()
