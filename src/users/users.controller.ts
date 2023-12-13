@@ -12,7 +12,7 @@ import {
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { ResponseHandler } from 'src/utils/response-handler';
+import { ResponseHandler } from 'src/util/response-handler';
 
 @Controller('users')
 export class UsersController {
@@ -27,8 +27,8 @@ export class UsersController {
       res,
       this.usersService.create(createUserDto),
       HttpStatus.CREATED,
-      'Berhasil membuat user'
-    )
+      'Berhasil membuat user',
+    );
   }
 
   @Get()
@@ -38,7 +38,7 @@ export class UsersController {
       this.usersService.findAll(),
       HttpStatus.OK,
       'User yang terdaftar',
-    )
+    );
   }
 
   @Get(':id')
@@ -48,7 +48,7 @@ export class UsersController {
       this.usersService.findOne(id),
       HttpStatus.OK,
       'User yang dicari',
-    )
+    );
   }
 
   @Patch(':id')
@@ -62,7 +62,7 @@ export class UsersController {
       this.usersService.update(id, updateUserDto),
       HttpStatus.OK,
       'Berhasil mengubah user',
-    )
+    );
   }
 
   @Delete(':id')
@@ -72,6 +72,6 @@ export class UsersController {
       this.usersService.remove(id),
       HttpStatus.OK,
       'Berhasil menghapus user',
-    )
+    );
   }
 }

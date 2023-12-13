@@ -11,7 +11,7 @@ export class AuthService {
     if (req.session.user) {
       throw new HttpException(
         'Anda sudah login, silahkan logout terlebih dahulu',
-        HttpStatus.UNAUTHORIZED,
+        HttpStatus.BAD_REQUEST,
       );
     }
 

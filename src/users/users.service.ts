@@ -12,10 +12,6 @@ export class UsersService {
   async create(createUserDto: CreateUserDto) {
     const { email, name, password, confPassword } = createUserDto;
 
-    if (!email || !name || !password || !confPassword) {
-      throw new HttpException('Data tidak lengkap', HttpStatus.BAD_REQUEST);
-    }
-
     const cekUser = await this.prisma.user.findUnique({
       where: {
         email,
@@ -85,10 +81,6 @@ export class UsersService {
 
   async update(id: string, updateUserDto: UpdateUserDto) {
     const { email, name, password, confPassword } = updateUserDto;
-
-    if (!email || !name || !password || !confPassword) {
-      throw new HttpException('Data tidak lengkap', HttpStatus.BAD_REQUEST);
-    }
 
     const cekUser = await this.prisma.user.findUnique({
       where: {
