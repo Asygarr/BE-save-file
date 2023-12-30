@@ -31,6 +31,6 @@ async function bootstrap() {
   app.enableCors();
   app.useStaticAssets('public');
 
-  await app.listen(3000);
+  await app.listen(8000);
 }
 bootstrap();

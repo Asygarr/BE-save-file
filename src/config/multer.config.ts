@@ -1,11 +1,10 @@
-// src/config/multer.config.ts
-import { diskStorage } from 'multer';
 import { v4 as uuidv4 } from 'uuid';
 import * as path from 'path';
 import * as fs from 'fs';
+import * as multer from 'multer';
 
 export class MulterConfig {
-  static storage = diskStorage({
+  static storage = multer.diskStorage({
     destination: (req, file, cb) => {
       const dirr = './public/uploads';
       if (!fs.existsSync(dirr)) {

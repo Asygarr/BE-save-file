@@ -9,10 +9,12 @@ import { PostsController } from './posts/posts.controller';
 @Module({
   imports: [UsersModule, PostsModule, AuthModule],
 })
-export class AppModule implements NestModule{
-  configure(consumer: MiddlewareConsumer) {
-    consumer
-      .apply(VerifyUserMiddleware)
-      .forRoutes(UsersController, PostsController);
-  }
-}
+export class AppModule {}
+
+// export class AppModule implements NestModule{
+//   configure(consumer: MiddlewareConsumer) {
+//     consumer
+//       .apply(VerifyUserMiddleware)
+//       .forRoutes(UsersController, PostsController);
+//   }
+// }
